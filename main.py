@@ -1,8 +1,8 @@
 import discord
-import aiohttp
 from discord.ext import commands
 from config import token
-from logic import Pokemon
+from logic import Pokemon, Wizard, Fighter
+import random
 
 # Setting up intents for the bot
 intents = discord.Intents.default()  # Getting the default settings
@@ -57,6 +57,35 @@ async def attack(ctx):
     else:
         await ctx.send("Tentukan pengguna yang ingin Kalian serang dengan menyebut mereka.")  # Meminta untuk menyebutkan pengguna untuk menyerang
 
+@bot.command()
+async def info(ctx):
+    if ctx.author.name in Pokemon.pokemons:
+        pok = Pokemon.pokemons[ctx.author.name]
+        result = await pok.info()  # Melakukan serangan dan mendapatkan hasilnya
+        await ctx.send(result)
+
+class Wizard(Pokemon):
+    async def feed(self):
+        return super().feed(hp_increase=20)
+
+class Fighter(Pokemon):
+    async def attack(self):
+
+async def info(ctx):
+    if ctx.author.name in Pokemon.pokemons:
+        pok = Pokemon.pokemons[ctx.author.name]
+        response = await pok.feed()  
+        await ctx.send(response)
+
+        
+@bot.command()
+async def feed(ctx):
+    if ctx.author.name in Pokemon.pokemons:
+        pok = Pokemon.pokemons[ctx.author.name]
+        response = await pok.feed()  
+        await ctx.send(response)
+    else:
+        await ctx.send("Anda tidak punya Pokemon")
 
 # Running the bot
 bot.run(token)
